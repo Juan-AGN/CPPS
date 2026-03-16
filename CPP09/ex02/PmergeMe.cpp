@@ -428,17 +428,11 @@ std::deque<int> PmergeMe::qinserterNew(std::deque<int> &a, unsigned long pair, s
                 a.erase(it);
                 count ++;
             }
+            count -= pair;
         }
         sumjack += jackos[i];
+        count = sumjack * pair;
         i ++;
-    }
-
-    for (unsigned long count = 0; count < sumjack; count ++)
-    {
-        for (unsigned long n = 0; n < pair; n ++)
-        {
-
-        }
     }
 
     return (temp);
