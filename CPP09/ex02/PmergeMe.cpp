@@ -28,6 +28,7 @@ PmergeMe &PmergeMe::operator=(const PmergeMe &toCopy)
     if (this == &toCopy)
         return (*this);
     this->_input = toCopy._input;
+    this->_qinput = toCopy._qinput;
     return (*this);
 }
 
@@ -59,6 +60,7 @@ void PmergeMe::execInput()
     std::vector<int> solved = this->_input;
     std::deque<int> qsolved = this->_qinput;
 
+    std::cout << std::endl << "// vector:" << std::endl;
     clock_t start = clock();
     if (this->_input.size() <= 3)
     {
@@ -66,9 +68,11 @@ void PmergeMe::execInput()
         this->miniMerge(solved);
         this->printResult(solved);
         std::cout << "Time to process a range of " << this->_input.size() << " elements with std::vector : " << std::fixed << std::setprecision(0) << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000 << " us" << std::endl;
+        std::cout << std::endl << "// deque:" << std::endl;
         start = clock();
         this->qminiMerge(qsolved);
         end = clock();
+        this->qprintResult(qsolved);
         std::cout << "Time to process a range of " << this->_input.size() << " elements with std::deque : " << std::fixed << std::setprecision(0) << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000 << " us" << std::endl;
         return ;
     }
@@ -78,10 +82,12 @@ void PmergeMe::execInput()
     this->printResult(solved);
     std::cout << "Time to process a range of " << this->_input.size() << " elements with std::vector : " << std::fixed << std::setprecision(0) << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000 << " us" << std::endl;
 
+    std::cout << std::endl << "// deque:" << std::endl;
     start = clock();
     this->qexecRecursiveRev(qsolved, this->qexecRecursive(qsolved, 1));
     end = clock();
-    std::cout << "Time to process a range of " << this->_input.size() << " elements with std::deque : " << std::fixed << std::setprecision(0) << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000 << " us" << std::endl;
+    this->qprintResult(qsolved);
+    std::cout << "Time to process a range of " << this->_qinput.size() << " elements with std::deque : " << std::fixed << std::setprecision(0) << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000000 << " us" << std::endl;
 }
 
 void PmergeMe::printResult(std::vector<int> solved)
@@ -405,7 +411,9 @@ std::deque<int> PmergeMe::qinserterNew(std::deque<int> &a, unsigned long pair, s
     unsigned long prejack = 0;
     unsigned long sumjack = 0;
     unsigned long i = 0;
+    unsigned long count = 0;
     std::deque<int> temp;
+    std::deque<int>::iterator it = a.begin();
 
     while (jackos.begin() + i < jackos.end())
     {
@@ -414,7 +422,11 @@ std::deque<int> PmergeMe::qinserterNew(std::deque<int> &a, unsigned long pair, s
         {
             for (unsigned long n = 0; n < pair; n ++)
             {
-                temp.push_back(a[((pair * 2) + ((pair * 2) * (prejack + sumjack)) - (pair * 2)) + n]);
+                temp.push_back(a[((pair * 2) + ((pair * 2) * (prejack + sumjack)) - (pair * 2)) + n - count]);
+                it = a.begin();
+                std::advance(it, ((pair * 2) + ((pair * 2) * (prejack + sumjack)) - (pair * 2)) + n - count);
+                a.erase(it);
+                count ++;
             }
         }
         sumjack += jackos[i];
@@ -424,7 +436,9 @@ std::deque<int> PmergeMe::qinserterNew(std::deque<int> &a, unsigned long pair, s
     for (unsigned long count = 0; count < sumjack; count ++)
     {
         for (unsigned long n = 0; n < pair; n ++)
-            a.erase(a.begin() + (pair * 2) + ((sumjack - count) * (pair * 2)) - (pair * 2));
+        {
+
+        }
     }
 
     return (temp);
